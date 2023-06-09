@@ -111,22 +111,9 @@ class tracksWidget extends StatefulWidget {
 
 //ignore: camel_case_types
 class tracksWidgetState extends State<tracksWidget> {
-  final OnAudioQuery _audioQuery = staticData.audioQuery;
-  bool _hasPermissions = false;
-
   @override
   void initState() {
     super.initState();
-
-    //check and request for media access permissions
-    checkAndRequestPermissions();
-  }
-
-  checkAndRequestPermissions({bool retry = false}) async {
-    _hasPermissions = await _audioQuery.checkAndRequest(retryRequest: retry);
-
-    //only call update the UI if have all the required permissions
-    _hasPermissions ? setState(() {}) : null;
   }
 
   @override
@@ -143,10 +130,9 @@ class tracksWidgetState extends State<tracksWidget> {
             child: Consumer<favouriteChangeNotifier>(
               builder: (_, value, cild) {
                 return ListView.builder(
-                    itemCount: staticData.isFavourites
+                    itemCount: widget.favourite
                         ? staticData.favouriteTracksPlaylist.length + 1
-                        :
-                         staticData.allTracksPlaylist.length + 1,
+                        : staticData.allTracksPlaylist.length + 1,
                     itemBuilder: (context, index) {
                       if (index == 0) {
                         return upperWidget(widget.favourite
@@ -210,7 +196,6 @@ class trackWidget extends StatelessWidget {
     final allTrackSongModelMapping = staticData.allTrackSongModelMapping;
     return ListTile(
       onTap: () {
-        
         staticData.player.setAudioSource(
             favourite ? favouriteTracksPlaylist : allTracksPlaylist,
             initialIndex: index);
@@ -249,7 +234,10 @@ class trackWidget extends StatelessWidget {
 
   bool isCurrentPlaying(int index) {
     bool val = false;
-    val = staticData.player.currentIndex == index;
+    if (favourite == staticData.isFavourites) {
+      val = staticData.player.currentIndex == index;
+    }
+
     return val;
   }
 }
