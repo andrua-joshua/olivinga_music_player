@@ -31,11 +31,11 @@ class startScreenState extends State<startScreen> {
     checkAndRequestPermissions();
   }
 
-  checkAndRequestPermissions({bool retry = false}) async {
+  checkAndRequestPermissions({bool retry = true}) async {
     _hasPermissions = await _audioQuery.checkAndRequest(retryRequest: retry);
 
     //only call update the UI if have all the required permissions
-    _hasPermissions ? setState(() {}) : null;
+    //_hasPermissions ? setState(() {}) : null;
   }
 
   @override
@@ -75,17 +75,21 @@ class startScreenState extends State<startScreen> {
 
               staticData.favouriteSongModelMapping.clear();
               staticData.favouriteTracksPlaylist.clear();
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return Center(
-                      child: Text(
-                        "size = ${value.length} and all: ${staticData.allTracksPlaylist.length}, favourite: ${staticData.favouriteTracksPlaylist.length}",
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    );
-                  });
 
+              //this is for debugging
+              // showDialog(
+              //     context: context,
+              //     builder: (context) {
+              //       return Center(
+              //         child: Text(
+              //           "size = ${value.length} and all: ${staticData.allTracksPlaylist.length}, favourite: ${staticData.favouriteTracksPlaylist.length}",
+              //           style: const TextStyle(color: Colors.white),
+              //         ),
+              //       );
+              //     });
+
+              while (!_hasPermissions);
+              
               Navigator.pushNamed(context, RouteGenerator.homescreen);
             });
           });
